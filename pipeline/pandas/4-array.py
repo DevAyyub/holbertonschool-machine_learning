@@ -1,3 +1,4 @@
+cat << 'EOF' > 4-array.py
 #!/usr/bin/env python3
 """
 This module provides a function to extract specific columns and rows
