@@ -3,7 +3,6 @@
 This module provides a function to extract specific columns and rows
 from a pandas DataFrame and convert them into a numpy ndarray.
 """
-import pandas as pd
 
 
 def array(df):
@@ -12,7 +11,7 @@ def array(df):
     and converts them into a numpy.ndarray.
 
     Args:
-        df (pd.DataFrame): The input DataFrame.
+        df: The input DataFrame.
 
     Returns:
         numpy.ndarray: The resulting array.
