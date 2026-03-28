@@ -15,7 +15,7 @@ def frequency():
     student_grades = np.random.normal(68, 15, 50)
     plt.figure(figsize=(6.4, 4.8))
 
-    # Define the bins exactly every 10 units using np.arange
+    # Define bins exactly every 10 units
     bins = np.arange(0, 110, 10)
 
     # Plot the histogram with black edge color
@@ -26,9 +26,10 @@ def frequency():
     plt.ylabel('Number of Students')
     plt.title('Project A')
 
-    # Set x-axis limits and tick marks
+    # Set exact x and y axis limits to match the reference plot
     plt.xlim(0, 100)
     plt.xticks(bins)
+    plt.ylim(0, 30)
 
     # Display the plot
     plt.show()
