@@ -15,9 +15,9 @@ def line():
 
     # Plot y as a solid red line
     plt.plot(y, 'r-')
-    
+
     # Limit the x-axis from 0 to 10
     plt.xlim(0, 10)
-    
+
     # Display the plot
     plt.show()
