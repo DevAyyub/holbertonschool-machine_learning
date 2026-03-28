@@ -19,7 +19,7 @@ def poly_integral(poly, C=0):
         return None
     if type(C) is not int and type(C) is not float:
         return None
-    
+
     # Ensure C is an integer if it's a whole number float
     if type(C) is float and C % 1 == 0:
         C = int(C)
@@ -41,7 +41,8 @@ def poly_integral(poly, C=0):
         integral.append(val)
 
     # Remove trailing zeros to make the list as small as possible
-    # We use len(integral) > 1 to ensure we don't pop a final zero if the list is just [0]
+    # We use len > 1 to ensure we don't pop a final zero
+    # if the list is just [0]
     while len(integral) > 1 and integral[-1] == 0:
         integral.pop()
 
