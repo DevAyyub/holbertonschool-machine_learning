@@ -16,7 +16,7 @@ class DeepNeuralNetwork:
         Initializes the deep neural network.
 
         Parameters:
-        nx (int): The number of input features.
+        nx (int): Number of input features.
         layers (list): A list representing the number of nodes
                        in each layer of the network.
         """
@@ -31,17 +31,17 @@ class DeepNeuralNetwork:
         self.cache = {}
         self.weights = {}
 
-        # Loop through each layer to initialize weights and biases
+        # Iterate through each layer to initialize weights and biases
         for i in range(self.L):
             if type(layers[i]) is not int or layers[i] <= 0:
                 raise TypeError("layers must be a list of positive integers")
 
-            # For the first hidden layer, previous nodes = nx
-            # For subsequent layers, previous nodes = layers[i - 1]
+            # First hidden layer previous nodes = nx
+            # Subsequent layers previous nodes = layers[i - 1]
             prev_nodes = nx if i == 0 else layers[i - 1]
             current_nodes = layers[i]
 
-            # He Initialization for weights
+            # He Initialization of weights
             # W = random normal * sqrt(2 / prev_nodes)
             W_key = f'W{i + 1}'
             self.weights[W_key] = np.random.randn(current_nodes, prev_nodes) * \
