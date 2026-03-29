@@ -176,11 +176,9 @@ class Decision_Tree():
         return self.root.pred(x)
 
     def np_extrema(self, arr):
-        """Returns min and max of an array"""
         return np.min(arr), np.max(arr)
 
     def random_split_criterion(self, node):
-        """Randomly chooses a feature and threshold for splitting"""
         diff = 0
         while diff == 0:
             feature = self.rng.integers(0, self.explanatory.shape[1])
@@ -211,7 +209,6 @@ class Decision_Tree():
                 self.accuracy(self.explanatory, self.target)))
 
     def fit_node(self, node):
-        """Recursively grows the tree by splitting nodes"""
         node.feature, node.threshold = self.split_criterion(node)
         left_pop = np.logical_and(
             node.sub_population,
@@ -222,7 +219,6 @@ class Decision_Tree():
             self.explanatory[:, node.feature] <= node.threshold
         )
 
-        # Check leaf conditions for left child
         is_left_leaf = (
             node.depth + 1 == self.max_depth or
             np.sum(left_pop) <= self.min_pop or
@@ -234,7 +230,6 @@ class Decision_Tree():
             node.left_child = self.get_node_child(node, left_pop)
             self.fit_node(node.left_child)
 
-        # Check leaf conditions for right child
         is_right_leaf = (
             node.depth + 1 == self.max_depth or
             np.sum(right_pop) <= self.min_pop or
@@ -247,8 +242,6 @@ class Decision_Tree():
             self.fit_node(node.right_child)
 
     def get_leaf_child(self, node, sub_population):
-        """Creates a leaf child with the most common target value"""
-        # Find mode of classes in sub_population
         classes = self.target[sub_population]
         if classes.size == 0:
             value = 0
@@ -260,14 +253,12 @@ class Decision_Tree():
         return leaf_child
 
     def get_node_child(self, node, sub_population):
-        """Creates an internal node child"""
         n = Node()
         n.depth = node.depth + 1
         n.sub_population = sub_population
         return n
 
     def accuracy(self, test_explanatory, test_target):
-        """Calculates accuracy of predictions"""
         return np.sum(np.equal(self.predict(test_explanatory),
                                test_target)) / test_target.size
 
