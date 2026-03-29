@@ -13,13 +13,7 @@ class NeuralNetwork:
     """
 
     def __init__(self, nx, nodes):
-        """
-        Initializes the neural network.
-
-        Parameters:
-        nx (int): The number of input features.
-        nodes (int): The number of nodes in the hidden layer.
-        """
+        """Initializes the neural network."""
         if type(nx) is not int:
             raise TypeError("nx must be an integer")
         if nx < 1:
@@ -39,44 +33,36 @@ class NeuralNetwork:
 
     @property
     def W1(self):
-        """Retrieves the weights vector for the hidden layer."""
+        """Retrieves the weights vector of the hidden layer."""
         return self.__W1
 
     @property
     def b1(self):
-        """Retrieves the bias for the hidden layer."""
+        """Retrieves the bias of the hidden layer."""
         return self.__b1
 
     @property
     def A1(self):
-        """Retrieves the activated output for the hidden layer."""
+        """Retrieves the activated output of the hidden layer."""
         return self.__A1
 
     @property
     def W2(self):
-        """Retrieves the weights vector for the output neuron."""
+        """Retrieves the weights vector of the output neuron."""
         return self.__W2
 
     @property
     def b2(self):
-        """Retrieves the bias for the output neuron."""
+        """Retrieves the bias of the output neuron."""
         return self.__b2
 
     @property
     def A2(self):
-        """Retrieves the activated output for the output neuron."""
+        """Retrieves the activated output of the output neuron."""
         return self.__A2
 
     def forward_prop(self, X):
-        """
-        Calculates the forward propagation of the neural network.
-
-        Parameters:
-        X (numpy.ndarray): Array with shape (nx, m) containing input data.
-
-        Returns:
-        The private attributes __A1 and __A2, respectively.
-        """
+        """Calculates the forward propagation of the neural network."""
         Z1 = np.matmul(self.__W1, X) + self.__b1
         self.__A1 = 1 / (1 + np.exp(-Z1))
 
@@ -86,16 +72,7 @@ class NeuralNetwork:
         return self.__A1, self.__A2
 
     def cost(self, Y, A):
-        """
-        Calculates the cost of the model using logistic regression.
-
-        Parameters:
-        Y (numpy.ndarray): Array with shape (1, m) containing correct labels.
-        A (numpy.ndarray): Array with shape (1, m) containing activated output.
-
-        Returns:
-        The cost.
-        """
+        """Calculates the cost of the model using logistic regression."""
         m = Y.shape[1]
         loss_1 = Y * np.log(A)
         loss_2 = (1 - Y) * np.log(1.0000001 - A)
@@ -103,23 +80,8 @@ class NeuralNetwork:
         return cost
 
     def evaluate(self, X, Y):
-        """
-        Evaluates the neural network's predictions.
-
-        Parameters:
-        X (numpy.ndarray): Array with shape (nx, m) containing input data.
-        Y (numpy.ndarray): Array with shape (1, m) containing correct labels.
-
-        Returns:
-        The prediction and the cost of the network, respectively.
-        """
-        # Run forward propagation; we only need A2 for the evaluation
+        """Evaluates the neural network's predictions."""
         A1, A2 = self.forward_prop(X)
-        
-        # Calculate the cost using the true labels and final predictions
         cost = self.cost(Y, A2)
-        
-        # Convert continuous probabilities to binary predictions (1 or 0)
         prediction = np.where(A2 >= 0.5, 1, 0)
-        
         return prediction, cost
