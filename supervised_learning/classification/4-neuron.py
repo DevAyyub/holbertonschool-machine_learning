@@ -84,13 +84,10 @@ class Neuron:
         Returns:
         The neuron's prediction and the cost of the network, respectively.
         """
-        # Get the activated output (probabilities)
         A = self.forward_prop(X)
-        
-        # Calculate the cost using the true labels and probabilities
+
         cost = self.cost(Y, A)
-        
-        # Convert probabilities to binary predictions (1 or 0)
+
         prediction = np.where(A >= 0.5, 1, 0)
-        
+
         return prediction, cost
