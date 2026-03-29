@@ -191,7 +191,6 @@ class Decision_Tree():
         return feature, threshold
 
     def fit(self, explanatory, target, verbose=0):
-        """Trains the decision tree on the given data"""
         if self.split_criterion == "random":
             self.split_criterion = self.random_split_criterion
         self.explanatory = explanatory
@@ -200,13 +199,13 @@ class Decision_Tree():
         self.fit_node(self.root)
         self.update_predict()
         if verbose == 1:
-            print("  Training finished.")
-            print("- Depth                     : {}".format(self.depth()))
-            print("- Number of nodes           : {}".format(self.count_nodes()))
-            print("- Number of leaves          : {}".format(
-                self.count_nodes(only_leaves=True)))
-            print("- Accuracy on training data : {}".format(
-                self.accuracy(self.explanatory, self.target)))
+            print(f"  Training finished.\n"
+                  f"    - Depth                     : {self.depth()}\n"
+                  f"    - Number of nodes           : {self.count_nodes()}\n"
+                  f"    - Number of leaves          : "
+                  f"{self.count_nodes(only_leaves=True)}\n"
+                  f"    - Accuracy on training data : "
+                  f"{self.accuracy(self.explanatory, self.target)}")
 
     def fit_node(self, node):
         node.feature, node.threshold = self.split_criterion(node)
