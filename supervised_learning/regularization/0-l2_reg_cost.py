@@ -16,21 +16,10 @@ def l2_reg_cost(cost, lambtha, weights, L, m):
         m: number of data points used
     Returns: the cost of the network accounting for L2 regularization
     """
-    l2_sum = 0
-    for i in range(1, L + 1):
-        key = "W{}".format(i)
-        l2_sum += np.linalg.norm(weights[key])
-    
-    # We use np.linalg.norm(weights[key]) which is Frobenius norm by default.
-    # Note: The sum of squares is norm squared.
-    # However, np.linalg.norm returns the sqrt(sum(squares)).
-    # To get sum of squares we can do: np.sum(np.square(weights[key]))
-    
-    # Redefining sum for clarity using np.sum(np.square())
     l2_cost_total = 0
     for i in range(1, L + 1):
         key = "W{}".format(i)
-        l2_cost_total += np.sum(np.square(weights[key]))
+        l2_cost_total += np.sum(np.square(weights.get(key)))
 
     l2_reg = (lambtha / (2 * m)) * l2_cost_total
     return cost + l2_reg
