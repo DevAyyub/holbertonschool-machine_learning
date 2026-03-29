@@ -41,11 +41,11 @@ class DeepNeuralNetwork:
             prev_nodes = nx if i == 0 else layers[i - 1]
             current_nodes = layers[i]
 
-            # He Initialization of weights
-            # W = random normal * sqrt(2 / prev_nodes)
+            # He Initialization calculation
+            he = np.sqrt(2 / prev_nodes)
             W_key = f'W{i + 1}'
-            self.weights[W_key] = np.random.randn(current_nodes, prev_nodes) * \
-                np.sqrt(2 / prev_nodes)
+            self.weights[W_key] = np.random.randn(
+                current_nodes, prev_nodes) * he
 
             # Initialize biases to 0
             b_key = f'b{i + 1}'
