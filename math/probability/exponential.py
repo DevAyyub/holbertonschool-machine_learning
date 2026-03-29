@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
-Module containing the Exponential class to represent an exponential distribution
+Module containing the Exponential class.
 """
 
 
 class Exponential:
     """
-    Represents an exponential distribution
+    Represents an exponential distribution.
     """
 
     def __init__(self, data=None, lambtha=1.):
         """
-        Initialize Exponential distribution
+        Initialize Exponential distribution.
         """
         if data is None:
             if lambtha <= 0:
@@ -22,6 +22,6 @@ class Exponential:
                 raise TypeError("data must be a list")
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
-            
+
             mean = sum(data) / len(data)
             self.lambtha = float(1 / mean)
