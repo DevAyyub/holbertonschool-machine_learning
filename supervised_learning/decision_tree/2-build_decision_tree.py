@@ -37,7 +37,6 @@ class Node:
     def left_child_get_prefix(self, text):
         """Adds prefix for left child string representation"""
         lines = text.split("\n")
-        # Added a space after the '>' to match desired output
         new_text = "    +---> " + lines[0] + "\n"
         for x in lines[1:]:
             if x:
@@ -47,7 +46,6 @@ class Node:
     def right_child_get_prefix(self, text):
         """Adds prefix for right child string representation"""
         lines = text.split("\n")
-        # Added a space after the '>' to match desired output
         new_text = "    +---> " + lines[0] + "\n"
         for x in lines[1:]:
             if x:
@@ -57,9 +55,11 @@ class Node:
     def __str__(self):
         """Returns the string representation of the node"""
         if self.is_root:
-            out = f"root [feature={self.feature}, threshold={self.threshold}]\n"
+            out = "root [feature={}, threshold={}]\n".format(self.feature,
+                                                             self.threshold)
         else:
-            out = f"node [feature={self.feature}, threshold={self.threshold}]\n"
+            out = "node [feature={}, threshold={}]\n".format(self.feature,
+                                                             self.threshold)
 
         out += self.left_child_get_prefix(self.left_child.__str__())
         out += self.right_child_get_prefix(self.right_child.__str__())
@@ -87,7 +87,7 @@ class Leaf(Node):
 
     def __str__(self):
         """Returns the string representation of the leaf"""
-        return f"leaf [value={self.value}]"
+        return "leaf [value={}]".format(self.value)
 
 
 class Decision_Tree():
