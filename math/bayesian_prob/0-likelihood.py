@@ -22,10 +22,16 @@ def likelihood(x, n, P):
     if not np.all((P >= 0) & (P <= 1)):
         raise ValueError("All values in P must be in the range [0, 1]")
 
-    import math
-    fact_n = math.factorial(n)
-    fact_x = math.factorial(x)
-    fact_nx = math.factorial(n - x)
-    combination = fact_n / (fact_x * fact_nx)
+    def factorial(num):
+        f = 1
+        for i in range(1, num + 1):
+            f *= i
+        return f
+
+    n_fact = factorial(n)
+    x_fact = factorial(x)
+    nx_fact = factorial(n - x)
+
+    combination = n_fact / (x_fact * nx_fact)
 
     return combination * (P ** x) * ((1 - P) ** (n - x))
