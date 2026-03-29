@@ -1,1 +1,1 @@
-Project: Keras - Task 0: Sequential
+Machine Learning - Keras
