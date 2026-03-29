@@ -1,31 +1,36 @@
 #!/usr/bin/env python3
-"""
-Module to create a batch normalization layer in TensorFlow
-"""
+"""Batch Normalization Upgraded"""
 import tensorflow as tf
 
 
 def create_batch_norm_layer(prev, n, activation):
     """
     Creates a batch normalization layer for a neural network in tensorflow
-    Args:
-        prev: activated output of the previous layer
-        n: number of nodes in the layer to be created
-        activation: activation function to be used on the output of the layer
-    Returns:
-        A tensor of the activated output for the layer
     """
+    # Base Dense layer with VarianceScaling initializer
     init = tf.keras.initializers.VarianceScaling(mode='fan_avg')
-    layer = tf.keras.layers.Dense(
-        units=n,
-        kernel_initializer=init,
-        use_bias=False
+    dense = tf.keras.layers.Dense(units=n, kernel_initializer=init)
+    
+    # Get the linear output of the layer
+    z = dense(prev)
+
+    # Calculate mean and variance along the batch axis (0)
+    mean, variance = tf.nn.moments(z, axes=[0])
+
+    # Initialize trainable parameters gamma (1s) and beta (0s)
+    gamma = tf.Variable(tf.ones([n]), name='gamma', trainable=True)
+    beta = tf.Variable(tf.zeros([n]), name='beta', trainable=True)
+
+    # Apply normalization and scale/shift (y = gamma * norm + beta)
+    # Using epsilon = 1e-7 as per requirements
+    norm = tf.nn.batch_normalization(
+        z,
+        mean,
+        variance,
+        offset=beta,
+        scale=gamma,
+        variance_epsilon=1e-7
     )
-    z = layer(prev)
 
-    batch_norm = tf.keras.layers.BatchNormalization(epsilon=1e-7)
-    z_bn = batch_norm(z)
-
-    if activation is None:
-        return z_bn
-    return activation(z_bn)
+    # Return the activated output
+    return activation(norm)
