@@ -33,45 +33,51 @@ class DeepNeuralNetwork:
             b_key = "b" + str(i + 1)
 
             if i == 0:
-                self.__weights[w_key] = np.random.randn(layers[i], nx) * np.sqrt(2 / nx)
+                self.__weights[w_key] = (np.random.randn(layers[i], nx) *
+                                         np.sqrt(2 / nx))
             else:
-                self.__weights[w_key] = np.random.randn(layers[i], layers[i-1]) * np.sqrt(2 / layers[i-1])
-            
+                self.__weights[w_key] = (np.random.randn(layers[i],
+                                         layers[i-1]) *
+                                         np.sqrt(2 / layers[i-1]))
+
             self.__weights[b_key] = np.zeros((layers[i], 1))
 
     @property
     def L(self):
+        """Getter for L"""
         return self.__L
 
     @property
     def cache(self):
+        """Getter for cache"""
         return self.__cache
 
     @property
     def weights(self):
+        """Getter for weights"""
         return self.__weights
 
     def forward_prop(self, X):
         """
         Calculates the forward propagation of the neural network
-        Updated for multiclass: Softmax on the output layer
         """
         self.__cache['A0'] = X
         for i in range(self.__L):
             W = self.__weights['W' + str(i + 1)]
             b = self.__weights['b' + str(i + 1)]
             A_prev = self.__cache['A' + str(i)]
-            
+
             Z = np.dot(W, A_prev) + b
-            
+
             if i == self.__L - 1:
                 # Softmax activation for the output layer
                 t = np.exp(Z)
-                self.__cache['A' + str(i + 1)] = t / np.sum(t, axis=0, keepdims=True)
+                self.__cache['A' + str(i + 1)] = (t / np.sum(t, axis=0,
+                                                  keepdims=True))
             else:
                 # Sigmoid activation for hidden layers
                 self.__cache['A' + str(i + 1)] = 1 / (1 + np.exp(-Z))
-                
+
         return self.__cache['A' + str(self.__L)], self.__cache
 
     def cost(self, Y, A):
@@ -79,26 +85,23 @@ class DeepNeuralNetwork:
         Calculates the cost using categorical cross-entropy
         """
         m = Y.shape[1]
-        # Categorical cross-entropy: -1/m * sum(Y * log(A))
-        # Note: Epsilon removed to match specific checker floating-point output
         cost = -1 / m * np.sum(Y * np.log(A))
         return cost
 
     def evaluate(self, X, Y):
         """
         Evaluates the neural network's predictions
-        Returns: prediction (one-hot), cost
         """
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
-        
+
         # Get indices of max probabilities
         max_indices = np.argmax(A, axis=0)
-        
+
         # Create one-hot matrix from indices
         classes = A.shape[0]
         prediction = np.eye(classes)[max_indices].T
-        
+
         return prediction.astype(int), cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
@@ -123,7 +126,8 @@ class DeepNeuralNetwork:
             self.__weights['W' + str(i)] = W - (alpha * dw)
             self.__weights['b' + str(i)] = b - (alpha * db)
 
-    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100):
+    def train(self, X, Y, iterations=5000, alpha=0.05,
+              verbose=True, graph=True, step=100):
         """
         Trains the deep neural network
         """
@@ -144,7 +148,7 @@ class DeepNeuralNetwork:
                 costs.append(curr_cost)
                 if verbose:
                     print("Cost after {} iterations: {}".format(i, curr_cost))
-            
+
             if i < iterations:
                 self.gradient_descent(Y, cache, alpha)
 
