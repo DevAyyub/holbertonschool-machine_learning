@@ -16,7 +16,10 @@ def specificity(confusion):
     actual_positives = np.sum(confusion, axis=1)
     predicted_positives = np.sum(confusion, axis=0)
     total = np.sum(confusion)
-    
+
     # TN = Total - (Row Sum + Col Sum - Diagonal)
     # Actual Negatives = Total - Row Sum
-    return (total - (actual_positives + predicted_positives - TP)) / (total - actual_positives)
+    TN = total - (actual_positives + predicted_positives - TP)
+    actual_negatives = total - actual_positives
+
+    return TN / actual_negatives
