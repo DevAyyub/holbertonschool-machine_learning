@@ -12,7 +12,13 @@ class DeepNeuralNetwork:
     """
 
     def __init__(self, nx, layers):
-        """Initializes the deep neural network."""
+        """
+        Initializes the deep neural network.
+
+        Parameters:
+        nx (int): Number of input features.
+        layers (list): Nodes per layer.
+        """
         if type(nx) is not int:
             raise TypeError("nx must be an integer")
         if nx < 1:
@@ -24,11 +30,13 @@ class DeepNeuralNetwork:
         self.__cache = {}
         self.__weights = {}
 
-        # Iterate through every layer to initialize weights and biases
+        # Loop 1: Layer initialization
         for i in range(self.__L):
             if type(layers[i]) is not int or layers[i] <= 0:
                 raise TypeError("layers must be a list of positive integers")
 
+            # First hidden layer: prev_nodes = nx
+            # Subsequent layers: prev_nodes = layers[i-1]
             prev_nodes = nx if i == 0 else layers[i - 1]
             current_nodes = layers[i]
 
@@ -42,23 +50,24 @@ class DeepNeuralNetwork:
 
     @property
     def L(self):
-        """Retrieves the number of layers."""
+        """Retrieves layer count."""
         return self.__L
 
     @property
     def cache(self):
-        """Retrieves the cache dictionary."""
+        """Retrieves cache dictionary."""
         return self.__cache
 
     @property
     def weights(self):
-        """Retrieves the weights dictionary."""
+        """Retrieves weights dictionary."""
         return self.__weights
 
     def forward_prop(self, X):
-        """Calculates the forward propagation."""
+        """Calculates forward propagation."""
         self.__cache["A0"] = X
 
+        # Loop 2: Propagation through layers
         for i in range(1, self.__L + 1):
             W = self.__weights["W{}".format(i)]
             b = self.__weights["b{}".format(i)]
@@ -71,7 +80,7 @@ class DeepNeuralNetwork:
         return self.__cache["A{}".format(self.__L)], self.__cache
 
     def cost(self, Y, A):
-        """Calculates the cost of the model."""
+        """Calculates cost of the model."""
         m = Y.shape[1]
         loss_1 = Y * np.log(A)
         loss_2 = (1 - Y) * np.log(1.0000001 - A)
@@ -79,17 +88,18 @@ class DeepNeuralNetwork:
         return cost
 
     def evaluate(self, X, Y):
-        """Evaluates the neural network predictions."""
+        """Evaluates network predictions."""
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
         prediction = np.where(A >= 0.5, 1, 0)
         return prediction, cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
-        """Calculates one pass of gradient descent."""
+        """Calculates gradient descent."""
         m = Y.shape[1]
         dz = cache["A{}".format(self.__L)] - Y
 
+        # Loop 3: Backpropagation from L to 1
         for i in range(self.__L, 0, -1):
             A_prev = cache["A{}".format(i - 1)]
             W_curr = self.__weights["W{}".format(i)]
@@ -105,18 +115,7 @@ class DeepNeuralNetwork:
             self.__weights["b{}".format(i)] = b_curr - (alpha * db)
 
     def train(self, X, Y, iterations=5000, alpha=0.05):
-        """
-        Trains the deep neural network.
-
-        Parameters:
-        X (numpy.ndarray): Input data (nx, m).
-        Y (numpy.ndarray): Correct labels (1, m).
-        iterations (int): Number of training passes.
-        alpha (float): Learning rate.
-
-        Returns:
-        The evaluation of the training data after training.
-        """
+        """Trains the deep network."""
         if type(iterations) is not int:
             raise TypeError("iterations must be an integer")
         if iterations <= 0:
@@ -126,7 +125,7 @@ class DeepNeuralNetwork:
         if alpha <= 0:
             raise ValueError("alpha must be positive")
 
-        # Single allowed loop for training iterations
+        # Loop 4: Training iterations
         for _ in range(iterations):
             A, cache = self.forward_prop(X)
             self.gradient_descent(Y, cache, alpha)
