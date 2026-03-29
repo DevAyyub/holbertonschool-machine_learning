@@ -3,7 +3,7 @@
 
 
 def np_elementwise(mat1, mat2):
-    """Performs element-wise addition, subtraction, multiplication, and division
+    """Performs element-wise math operations
     Args:
         mat1: The first numpy.ndarray
         mat2: The second numpy.ndarray or a scalar
