@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Module defining a single neuron for binary classification.
+Module defining a single neuron performing binary classification.
 """
 
 import numpy as np
@@ -16,7 +16,7 @@ class Neuron:
         Initializes the neuron.
 
         Parameters:
-        nx (int): The number of input features to the neuron.
+        nx (int): The number of input features given to the neuron.
         """
         if type(nx) is not int:
             raise TypeError("nx must be a integer")
@@ -29,25 +29,25 @@ class Neuron:
 
     @property
     def W(self):
-        """Getter for the weights vector."""
+        """Retrieves the weights vector."""
         return self.__W
 
     @property
     def b(self):
-        """Getter for the bias."""
+        """Retrieves the bias."""
         return self.__b
 
     @property
     def A(self):
-        """Getter for the activated output."""
+        """Retrieves the activated output."""
         return self.__A
 
     def forward_prop(self, X):
         """
-        Calculates the forward propagation of the neuron.
+        Calculates the forward propagation.
 
         Parameters:
-        X (numpy.ndarray): Array with shape (nx, m) containing the input data.
+        X (numpy.ndarray): Array with shape (nx, m) containing input data.
 
         Returns:
         The private attribute __A (the activated output).
@@ -100,14 +100,8 @@ class Neuron:
         alpha (float): The learning rate.
         """
         m = Y.shape[1]
-        
-        # Calculate the derivative of Z
         dZ = A - Y
-        
-        # Calculate the gradients for Weights and bias
         dW = np.matmul(dZ, X.T) / m
         db = np.sum(dZ) / m
-        
-        # Update the private attributes
         self.__W = self.__W - (alpha * dW)
         self.__b = self.__b - (alpha * db)
