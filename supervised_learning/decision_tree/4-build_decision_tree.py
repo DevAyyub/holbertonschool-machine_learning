@@ -47,15 +47,15 @@ class Node:
             self.lower = {0: -np.inf}
             self.upper = {0: np.inf}
 
-        # Left Child logic
+        # Left Child (Greater than threshold logic)
         self.left_child.lower = self.lower.copy()
         self.left_child.upper = self.upper.copy()
-        self.left_child.upper[self.feature] = self.threshold
+        self.left_child.lower[self.feature] = self.threshold
 
-        # Right Child logic
+        # Right Child (Less than or equal to threshold logic)
         self.right_child.lower = self.lower.copy()
         self.right_child.upper = self.upper.copy()
-        self.right_child.lower[self.feature] = self.threshold
+        self.right_child.upper[self.feature] = self.threshold
 
         # Recurse
         self.left_child.update_bounds_below()
