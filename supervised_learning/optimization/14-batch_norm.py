@@ -23,11 +23,7 @@ def create_batch_norm_layer(prev, n, activation):
     )
     z = layer(prev)
 
-    batch_norm = tf.keras.layers.BatchNormalization(
-        gamma_initializer='ones',
-        beta_initializer='zeros',
-        epsilon=1e-7
-    )
+    batch_norm = tf.keras.layers.BatchNormalization(epsilon=1e-7)
     z_bn = batch_norm(z)
 
     if activation is None:
