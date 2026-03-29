@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Module for building and training a decision tree model.
-Includes Node, Leaf, and Decision_Tree classes.
+Includes classes for Nodes, Leaves, and the Tree structure.
 """
 import numpy as np
 
@@ -124,7 +124,7 @@ class Leaf(Node):
         return self.depth
 
     def count_nodes_below(self, only_leaves=False):
-        """Returns 1 as the leaf is a single node."""
+        """Returns 1 as the leaf is a single unit."""
         return 1
 
     def get_leaves_below(self):
@@ -148,7 +148,7 @@ class Decision_Tree():
     """Represent a decision tree model."""
     def __init__(self, max_depth=10, min_pop=1, seed=0,
                  split_criterion="random", root=None):
-        """Initializes the decision tree."""
+        """Initializes the decision tree with hyperparameters."""
         self.rng = np.random.default_rng(seed)
         if root:
             self.root = root
@@ -222,16 +222,17 @@ class Decision_Tree():
         self.fit_node(self.root)
         self.update_predict()
         if verbose == 1:
-            print("  Training finished.")
-            print("- Depth                     : {}".format(self.depth()))
-            print("- Number of nodes           : {}".format(self.count_nodes()))
-            print("- Number of leaves          : {}".format(
-                self.count_nodes(only_leaves=True)))
-            print("- Accuracy on training data : {}".format(
-                self.accuracy(self.explanatory, self.target)))
+            # Use the EXACT formatting from the project template
+            print(f"  Training finished.\n"
+                  f"- Depth                     : {self.depth()}\n"
+                  f"- Number of nodes           : {self.count_nodes()}\n"
+                  f"- Number of leaves          : "
+                  f"{self.count_nodes(only_leaves=True)}\n"
+                  f"- Accuracy on training data : "
+                  f"{self.accuracy(self.explanatory, self.target)}")
 
     def fit_node(self, node):
-        """Recursive node training."""
+        """Recursive node training logic."""
         node.feature, node.threshold = self.split_criterion(node)
         left_pop = np.logical_and(
             node.sub_population,
