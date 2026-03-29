@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Module for building and training a decision tree using Gini Impurity.
-This module contains the logic for finding the optimal mathematical split.
+This module implements optimal splitting based on class diversity.
 """
 import numpy as np
 
@@ -106,7 +106,7 @@ class Node:
 
 
 class Leaf(Node):
-    """Represent a leaf in the decision tree."""
+    """Represent a terminal leaf in the decision tree."""
     def __init__(self, value, depth=None):
         """Initializes the leaf with its class value and depth."""
         super().__init__()
@@ -115,15 +115,18 @@ class Leaf(Node):
         self.depth = depth
 
     def max_depth_below(self):
-        """Returns the depth of the leaf node."""
+        """
+        Returns the depth of the leaf node. This is a terminal point,
+        so the max depth below this leaf is just the leaf depth itself.
+        """
         return self.depth
 
     def count_nodes_below(self, only_leaves=False):
-        """Returns 1 as the leaf is a single unit."""
+        """Returns 1 as the leaf is a single unit in the count."""
         return 1
 
     def get_leaves_below(self):
-        """Returns the leaf itself in a list."""
+        """Returns the leaf itself in a list for collection."""
         return [self]
 
     def update_bounds_below(self):
@@ -131,7 +134,7 @@ class Leaf(Node):
         pass
 
     def pred(self, x):
-        """Returns the prediction value of the leaf."""
+        """Returns the prediction value stored in the leaf."""
         return self.value
 
     def __str__(self):
@@ -140,10 +143,10 @@ class Leaf(Node):
 
 
 class Decision_Tree():
-    """Represent a decision tree model with training capabilities."""
+    """Represent a decision tree model with Gini training."""
     def __init__(self, max_depth=10, min_pop=1, seed=0,
                  split_criterion="random", root=None):
-        """Initializes the decision tree."""
+        """Initializes the decision tree with hyperparameters."""
         self.rng = np.random.default_rng(seed)
         if root:
             self.root = root
@@ -157,11 +160,11 @@ class Decision_Tree():
         self.predict = None
 
     def depth(self):
-        """Returns the maximum depth of the tree."""
+        """Returns the maximum depth of the entire tree."""
         return self.root.max_depth_below()
 
     def count_nodes(self, only_leaves=False):
-        """Counts the nodes in the tree."""
+        """Counts the nodes in the whole tree."""
         return self.root.count_nodes_below(only_leaves=only_leaves)
 
     def get_leaves(self):
@@ -173,7 +176,7 @@ class Decision_Tree():
         self.root.update_bounds_below()
 
     def update_predict(self):
-        """Computes the prediction function."""
+        """Computes the vectorized prediction function."""
         self.update_bounds()
         leaves = self.get_leaves()
         for leaf in leaves:
@@ -195,7 +198,7 @@ class Decision_Tree():
         return np.min(arr), np.max(arr)
 
     def random_split_criterion(self, node):
-        """Random split logic."""
+        """Random split selection logic."""
         diff = 0
         while diff == 0:
             feature = self.rng.integers(0, self.explanatory.shape[1])
@@ -213,37 +216,37 @@ class Decision_Tree():
         return (values[1:] + values[:-1]) / 2
 
     def Gini_split_criterion_one_feature(self, node, feature):
-        """Computes best Gini split for a single feature."""
+        """Computes best Gini split for one feature using 3D tensors."""
         x = self.explanatory[node.sub_population, feature]
         y = self.target[node.sub_population]
         t = self.possible_thresholds(node, feature)
-        n = y.size
         classes = np.unique(y)
 
-        # 3D tensor: [individuals, thresholds, classes]
+        # 3D logical comparison (Individuals x Thresholds x Classes)
+        # Left_F[i, j, k] is true if individual i has class k and x > thresh j
         greater_mask = x[:, np.newaxis] > t
         class_mask = y[:, np.newaxis] == classes
         Left_F = greater_mask[:, :, np.newaxis] & class_mask[:, np.newaxis, :]
 
-        # Left Child Stats
+        # Calculate population counts and class counts for both children
         n_left = np.sum(greater_mask, axis=0)
+        n_right = y.size - n_left
         c_left = np.sum(Left_F, axis=0)
-        # Avoid division by zero
-        p_left = np.divide(c_left, n_left[:, np.newaxis],
-                           out=np.zeros_like(c_left, dtype=float),
-                           where=n_left[:, np.newaxis] != 0)
-        gini_left = 1 - np.sum(p_left**2, axis=1)
-
-        # Right Child Stats
-        n_right = n - n_left
         c_right = np.sum(class_mask, axis=0) - c_left
-        p_right = np.divide(c_right, n_right[:, np.newaxis],
-                            out=np.zeros_like(c_right, dtype=float),
-                            where=n_right[:, np.newaxis] != 0)
+
+        # Calculate Gini impurities using vectorized division
+        with np.errstate(divide='ignore', invalid='ignore'):
+            p_left = c_left / n_left[:, np.newaxis]
+            p_right = c_right / n_right[:, np.newaxis]
+            # Replace NaNs (from zero population nodes) with 0
+            p_left = np.nan_to_num(p_left)
+            p_right = np.nan_to_num(p_right)
+
+        gini_left = 1 - np.sum(p_left**2, axis=1)
         gini_right = 1 - np.sum(p_right**2, axis=1)
 
         # Weighted Gini Average
-        gini_avg = (n_left * gini_left + n_right * gini_right) / n
+        gini_avg = (n_left * gini_left + n_right * gini_right) / y.size
         best_idx = np.argmin(gini_avg)
 
         return t[best_idx], gini_avg[best_idx]
@@ -256,7 +259,7 @@ class Decision_Tree():
         return i, X[i, 0]
 
     def fit(self, explanatory, target, verbose=0):
-        """Trains the decision tree on the given data."""
+        """Trains the tree and prints results with precise formatting."""
         if self.split_criterion == "random":
             self.split_criterion = self.random_split_criterion
         else:
@@ -268,15 +271,16 @@ class Decision_Tree():
         self.update_predict()
         if verbose == 1:
             print("  Training finished.")
-            print("- Depth                     : {}".format(self.depth()))
-            print("- Number of nodes           : {}".format(self.count_nodes()))
-            print("- Number of leaves          : {}".format(
+            print("    - Depth                     : {}".format(self.depth()))
+            print("    - Number of nodes           : {}".format(
+                self.count_nodes()))
+            print("    - Number of leaves          : {}".format(
                 self.count_nodes(only_leaves=True)))
-            print("- Accuracy on training data : {}".format(
+            print("    - Accuracy on training data : {}".format(
                 self.accuracy(self.explanatory, self.target)))
 
     def fit_node(self, node):
-        """Recursive node training."""
+        """Recursively grows the tree by splitting population."""
         node.feature, node.threshold = self.split_criterion(node)
         left_pop = np.logical_and(
             node.sub_population,
@@ -308,7 +312,7 @@ class Decision_Tree():
             self.fit_node(node.right_child)
 
     def get_leaf_child(self, node, sub_population):
-        """Creates a leaf child node."""
+        """Creates a leaf and assigns the majority class."""
         classes = self.target[sub_population]
         if classes.size == 0:
             value = 0
@@ -320,17 +324,17 @@ class Decision_Tree():
         return leaf_child
 
     def get_node_child(self, node, sub_population):
-        """Creates an internal node child."""
+        """Creates an internal node child for the tree."""
         n = Node()
         n.depth = node.depth + 1
         n.sub_population = sub_population
         return n
 
     def accuracy(self, test_explanatory, test_target):
-        """Calculates accuracy on test data."""
+        """Calculates accuracy on provided test data."""
         return np.sum(np.equal(self.predict(test_explanatory),
                                test_target)) / test_target.size
 
     def __str__(self):
-        """String representation of root."""
+        """String representation of the root node."""
         return self.root.__str__()
