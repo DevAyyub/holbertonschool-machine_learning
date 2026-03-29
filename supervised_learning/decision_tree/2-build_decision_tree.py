@@ -37,7 +37,8 @@ class Node:
     def left_child_get_prefix(self, text):
         """Adds prefix for left child string representation"""
         lines = text.split("\n")
-        new_text = "    +--->" + lines[0] + "\n"
+        # Added a space after the '>' to match desired output
+        new_text = "    +---> " + lines[0] + "\n"
         for x in lines[1:]:
             if x:
                 new_text += ("    |  " + x) + "\n"
@@ -46,7 +47,8 @@ class Node:
     def right_child_get_prefix(self, text):
         """Adds prefix for right child string representation"""
         lines = text.split("\n")
-        new_text = "    +--->" + lines[0] + "\n"
+        # Added a space after the '>' to match desired output
+        new_text = "    +---> " + lines[0] + "\n"
         for x in lines[1:]:
             if x:
                 new_text += ("       " + x) + "\n"
