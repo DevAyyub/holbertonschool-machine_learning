@@ -1,1 +1,1 @@
-# Calculus
+Machine Learning and Math projects

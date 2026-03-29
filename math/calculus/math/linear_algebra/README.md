@@ -1,1 +1,1 @@
-Slicing arrays in Python
+Linear Algebra - Task 0
