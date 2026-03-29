@@ -7,8 +7,8 @@ import numpy as np
 
 def posterior(x, n, P, Pr):
     """
-    Calculates the posterior probability for various hypothetical 
-    probabilities of developing severe side effects.
+    Calculates the posterior probability for various hypothetical
+    probabilities of developing severe side effects given the data.
     """
     if not isinstance(n, int) or n <= 0:
         raise ValueError("n must be a positive integer")
@@ -17,7 +17,7 @@ def posterior(x, n, P, Pr):
         raise ValueError(msg)
     if x > n:
         raise ValueError("x cannot be greater than n")
-    if not isinstance(P, np.ndarray) or len(P.shape) != 1:
+    if not isinstance(P, np.ndarray) or P.ndim != 1:
         raise TypeError("P must be a 1D numpy.ndarray")
     if not isinstance(Pr, np.ndarray) or Pr.shape != P.shape:
         raise TypeError("Pr must be a numpy.ndarray with the same shape as P")
@@ -28,17 +28,15 @@ def posterior(x, n, P, Pr):
     if not np.isclose(np.sum(Pr), 1):
         raise ValueError("Pr must sum to 1")
 
-    import math
-    # Intersection = Likelihood * Prior
-    fact_n = math.factorial(n)
-    fact_x = math.factorial(x)
-    fact_nx = math.factorial(n - x)
-    comb = fact_n / (fact_x * fact_nx)
-    likelihood = comb * (P ** x) * ((1 - P) ** (n - x))
+    def fact(num):
+        res = 1
+        for i in range(1, num + 1):
+            res *= i
+        return res
+
+    n_cr = fact(n) / (fact(x) * fact(n - x))
+    likelihood = n_cr * (P ** x) * ((1 - P) ** (n - x))
     intersection = likelihood * Pr
+    marginal_prob = np.sum(intersection)
 
-    # Marginal = sum of intersections
-    marginal = np.sum(intersection)
-
-    # Posterior = Intersection / Marginal
-    return intersection / marginal
+    return intersection / marginal_prob
