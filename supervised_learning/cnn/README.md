@@ -1,1 +1,1 @@
-Convolutional Neural Networks project - Task 0
+CNN - Pooling Forward Propagation
