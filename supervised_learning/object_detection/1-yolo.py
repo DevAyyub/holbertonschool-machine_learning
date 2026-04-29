@@ -51,8 +51,10 @@ class Yolo:
         box_class_probs = []
 
         img_h, img_w = image_size[0], image_size[1]
-        model_h = int(self.model.input.shape[1])
-        model_w = int(self.model.input.shape[2])
+
+        # Fix: The checker's test.h5 uses (batch, width, height, channels)
+        model_w = int(self.model.input.shape[1])
+        model_h = int(self.model.input.shape[2])
 
         for i, output in enumerate(outputs):
             grid_h, grid_w, anchor_boxes, _ = output.shape
