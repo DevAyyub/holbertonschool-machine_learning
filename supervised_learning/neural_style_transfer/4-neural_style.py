@@ -88,6 +88,7 @@ class NST:
             outputs[layer.name] = x
 
             # Break early ONLY when we have collected all required layers
+            # This fixes the bug where dynamically changing content_layer caused a crash
             if all(name in outputs for name in target_layers):
                 break
 
