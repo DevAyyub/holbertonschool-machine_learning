@@ -55,13 +55,13 @@ class NST:
 
         # Expand dims to make it shape (1, h, w, 3)
         image = tf.expand_dims(image, axis=0)
-        
+
         # Resize using bicubic interpolation
         image = tf.image.resize(image, [h_new, w_new], method='bicubic')
-        
+
         # Rescale pixel values from [0, 255] to [0, 1]
         image = image / 255.0
-        
+
         # Clip values to ensure strictly between 0 and 1
         image = tf.clip_by_value(image, 0.0, 1.0)
 
