@@ -71,7 +71,8 @@ class NST:
         x = vgg.input
         outputs = {}
 
-        # Reconstruct the model up to block5_conv2, replacing MaxPool with AvgPool
+        # Reconstruct the model up to block5_conv2,
+        # replacing MaxPool with AvgPool
         for layer in vgg.layers[1:]:
             if isinstance(layer, tf.keras.layers.MaxPooling2D):
                 x = tf.keras.layers.AveragePooling2D(
