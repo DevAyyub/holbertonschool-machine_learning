@@ -38,7 +38,7 @@ class NST:
         self.content_image = self.scale_image(content_image)
         self.alpha = alpha
         self.beta = beta
-        
+
         self.load_model()
         self.generate_features()
 
@@ -85,7 +85,7 @@ class NST:
                     name=layer.name)(x)
             else:
                 x = layer(x)
-            
+
             model_outputs[layer.name] = x
 
         outputs = [model_outputs[name] for name in self.style_layers]
@@ -103,10 +103,10 @@ class NST:
             raise TypeError("input_layer must be a tensor of rank 4")
 
         result = tf.linalg.einsum('bijc,bijd->bcd', input_layer, input_layer)
-        
+
         input_shape = tf.shape(input_layer)
         num_locations = tf.cast(input_shape[1] * input_shape[2], tf.float32)
-        
+
         return result / num_locations
 
     def generate_features(self):
