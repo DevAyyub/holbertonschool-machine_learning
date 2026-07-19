@@ -102,7 +102,7 @@ class Dataset:
             [pt, en],
             [tf.int64, tf.int64]
         )
-        
+
         result_pt.set_shape([None])
         result_en.set_shape([None])
 
