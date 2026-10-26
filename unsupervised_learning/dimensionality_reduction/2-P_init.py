@@ -18,7 +18,6 @@ def P_init(X, perplexity):
     """
     n, _ = X.shape
 
-    # Squared pairwise distance: ||x_i - x_j||^2 = ||x_i||^2 + ||x_j||^2 - 2 * x_i . x_j
     sum_X = np.sum(np.square(X), axis=1)
     D = np.add(np.add(-2 * np.dot(X, X.T), sum_X).T, sum_X)
     np.fill_diagonal(D, 0)
