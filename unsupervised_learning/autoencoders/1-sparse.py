@@ -18,35 +18,29 @@ def autoencoder(input_dims, hidden_layers, latent_dims, lambtha):
         decoder: The decoder model.
         auto: The sparse autoencoder model.
     """
-    # Encoder
     inputs_encoder = keras.Input(shape=(input_dims,))
     x = inputs_encoder
     for nodes in hidden_layers:
         x = keras.layers.Dense(nodes, activation='relu')(x)
 
-    reg = keras.regularizers.l1(lambtha)
+    l1_reg = keras.regularizers.l1(lambtha)
     latent = keras.layers.Dense(
         latent_dims,
         activation='relu',
-        activity_regularizer=reg
+        activity_regularizer=l1_reg
     )(x)
     encoder = keras.Model(inputs=inputs_encoder, outputs=latent)
 
-    # Decoder
     inputs_decoder = keras.Input(shape=(latent_dims,))
-    x = inputs_decoder
+    y = inputs_decoder
     for nodes in reversed(hidden_layers):
-        x = keras.layers.Dense(nodes, activation='relu')(x)
-    outputs_decoder = keras.layers.Dense(input_dims, activation='sigmoid')(x)
+        y = keras.layers.Dense(nodes, activation='relu')(y)
+    outputs_decoder = keras.layers.Dense(input_dims, activation='sigmoid')(y)
     decoder = keras.Model(inputs=inputs_decoder, outputs=outputs_decoder)
 
-    # Autoencoder
     auto_outputs = decoder(encoder(inputs_encoder))
     auto = keras.Model(inputs=inputs_encoder, outputs=auto_outputs)
 
-    auto.compile(
-        optimizer=keras.optimizers.Adam(),
-        loss='binary_crossentropy'
-    )
+    auto.compile(optimizer='adam', loss='binary_crossentropy')
 
     return encoder, decoder, auto
