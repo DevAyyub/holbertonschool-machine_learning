@@ -19,9 +19,7 @@ def grads(Y, P):
     n, ndim = Y.shape
     Q, num = Q_affinities(Y)
 
-    # Gradient: sum_j ((P_ij - Q_ij) * (1 + ||y_i - y_j||^2)^(-1) * (y_i - y_j))
-    # Note: num_ij = (1 + ||y_i - y_j||^2)^(-1)
-    # The requirement explicitly specifies: do not multiply by the scalar 4
+    # Note: requirement states not to multiply by scalar 4
     PQ = (P - Q) * num
     dY = np.zeros((n, ndim))
 
