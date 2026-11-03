@@ -2,14 +2,17 @@
 """
 Module to load and display Atari Breakout played by a trained DQN agent.
 """
+import sys
 import gymnasium as gym
 from gymnasium.wrappers import AtariPreprocessing
 import keras
+import keras.api._v2.keras as keras_v2
 from keras.models import load_model
 from keras.optimizers.legacy import Adam
 import tensorflow as tf
 
-tf.keras.__version__ = keras.__version__
+keras_v2.__version__ = keras.__version__
+sys.modules['tensorflow.keras'] = keras_v2
 
 from rl.agents.dqn import DQNAgent  # noqa: E402
 from rl.memory import SequentialMemory  # noqa: E402

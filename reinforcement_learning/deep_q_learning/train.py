@@ -2,15 +2,18 @@
 """
 Module to train a DQN agent to play Atari Breakout using keras-rl2.
 """
+import sys
 import gymnasium as gym
 from gymnasium.wrappers import AtariPreprocessing
 import keras
+import keras.api._v2.keras as keras_v2
 from keras.layers import Conv2D, Dense, Flatten, Permute
 from keras.models import Sequential
 from keras.optimizers.legacy import Adam
 import tensorflow as tf
 
-tf.keras.__version__ = keras.__version__
+keras_v2.__version__ = keras.__version__
+sys.modules['tensorflow.keras'] = keras_v2
 
 from rl.agents.dqn import DQNAgent  # noqa: E402
 from rl.memory import SequentialMemory  # noqa: E402
@@ -58,6 +61,19 @@ class GymnasiumToKerasRLWrapper(gym.Wrapper):
         obs, reward, terminated, truncated, info = self.env.step(action)
         done = terminated or truncated
         return obs, reward, done, info
+
+    def render(self, *args, **kwargs):
+        """
+        Render the environment compatible with keras-rl2.
+
+        Parameters:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            Rendered frame or None.
+        """
+        return self.env.render()
 
 
 def build_model(input_shape, nb_actions):
