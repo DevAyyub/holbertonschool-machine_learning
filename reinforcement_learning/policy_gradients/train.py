@@ -6,7 +6,7 @@ import numpy as np
 policy_gradient = __import__('policy_gradient').policy_gradient
 
 
-def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
+def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
     """
     Implements a full Monte-Carlo policy gradient training.
 
@@ -15,6 +15,8 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
         nb_episodes (int): Number of episodes used for training.
         alpha (float): The learning rate.
         gamma (float): The discount factor.
+        show_result (bool): Whether to render the environment every
+                            1000 episodes.
 
     Returns:
         list: All values of the score (sum of all rewards during one
@@ -31,6 +33,9 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
         grads = []
         rewards = []
         done = False
+
+        if show_result and episode % 1000 == 0:
+            env.render()
 
         while not done:
             action, grad = policy_gradient(state, weight)
