@@ -1,3 +1,2 @@
-# Temporal Difference & Monte Carlo Methods
-
-This directory covers Temporal Difference (TD) and Monte Carlo learning algorithms in Reinforcement Learning.
+# Temporal Difference
+Reinforcement learning project covering Monte Carlo, TD(0), TD(lambda), and SARSA(lambda).
