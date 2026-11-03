@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Module implementing the First-Visit Monte Carlo algorithm for value estimation.
+Module implementing the Monte Carlo algorithm for value estimation.
 """
 import numpy as np
 
@@ -22,8 +22,8 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
     Returns:
     - V: the updated value estimate
     """
-    for _ in range(episodes):
-        state, _ = env.reset()
+    for i in range(episodes):
+        state = env.reset()[0]
         episode = []
 
         for _ in range(max_steps):
@@ -34,13 +34,13 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
                 break
             state = next_state
 
-        G = 0
         episode = np.array(episode, dtype=int)
+        G = 0
 
         for j in range(len(episode) - 1, -1, -1):
             state, reward = episode[j]
             G = gamma * G + reward
-            if state not in episode[:j, 0]:
+            if state not in episode[:i, 0]:
                 V[state] = V[state] + alpha * (G - V[state])
 
     return V
