@@ -34,12 +34,11 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
                 break
             state = next_state
 
-        G = 0
-        visited = set()
-        for s, r in reversed(episode):
-            G = gamma * G + r
-            if s not in visited:
-                visited.add(s)
+        states = [step[0] for step in episode]
+        for i, (s, _) in enumerate(episode):
+            if s not in states[:i]:
+                G = sum(step[1] * (gamma ** idx)
+                        for idx, step in enumerate(episode[i:]))
                 V[s] = V[s] + alpha * (G - V[s])
 
     return V
