@@ -18,3 +18,26 @@ def policy(matrix, weight):
     """
     exp = np.exp(matrix @ weight)
     return exp / np.sum(exp)
+
+
+def policy_gradient(state, weight):
+    """
+    Computes the Monte-Carlo policy gradient based on a state and weight.
+
+    Args:
+        state (np.ndarray): Matrix representing the current observation
+                            of the environment.
+        weight (np.ndarray): Matrix of random weight.
+
+    Returns:
+        tuple: The action (int) and the gradient (np.ndarray).
+    """
+    state = state.reshape(1, -1)
+    probs = policy(state, weight)
+    action = np.random.choice(probs.shape[1], p=probs[0])
+
+    dsoftmax = -probs.copy()
+    dsoftmax[0, action] += 1
+    grad = state.T @ dsoftmax
+
+    return action, grad
